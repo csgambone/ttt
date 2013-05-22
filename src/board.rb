@@ -12,7 +12,7 @@ class Board
   def draw_board(cells)
     for i in 0..(@size-1)
       for j in 0..(@size-1)
-        print "#{cells[j]}"
+        print "#{cells[(i*@size)+j]}"
         print "|" unless j==@size-1
       end
       print "\n#{@horiz_div}\n" unless i==@size-1

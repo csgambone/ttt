@@ -16,7 +16,8 @@ describe Player do
   	@player.get_player_type.should eq("Human")
   end
 
-  it "should be able to play a piece" do
-
+  it "should get valid move" do
+    @player.stub(:gets).and_return('8')
+    @player.get_move.should eq(8)
   end
 end

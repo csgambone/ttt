@@ -11,4 +11,12 @@ class Player
   def get_player_type
   	return @player_type
   end
+  def get_move
+    move = "" 
+    until (move =~ /^[0-8]$/)
+      move = gets.chomp
+    end
+    move = move.to_i
+    return move
+  end
 end
