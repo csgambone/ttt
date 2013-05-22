@@ -13,6 +13,10 @@ class Game
   	return @cells[location]
   end
 
+  def get_cells
+    return @cells
+  end
+
   def set_cell(location, piece)
     @cells[location] = piece
   end
@@ -32,6 +36,21 @@ class Game
     end
   end
 
+  def win_check(cells, player)
+    result = case
+      when (cells[0] == cells[1] && cells[1] == cells[2] && cells[2] == player.get_piece) then player
+      when (cells[3] == cells[4] && cells[4] == cells[5] && cells[5] == player.get_piece) then player
+      when (cells[6] == cells[7] && cells[7] == cells[8] && cells[8] == player.get_piece) then player
+      when (cells[0] == cells[3] && cells[3] == cells[6] && cells[6] == player.get_piece) then player
+      when (cells[1] == cells[4] && cells[4] == cells[7] && cells[7] == player.get_piece) then player
+      when (cells[2] == cells[5] && cells[5] == cells[8] && cells[8] == player.get_piece) then player
+      when (cells[0] == cells[4] && cells[4] == cells[8] && cells[8] == player.get_piece) then player
+      when (cells[2] == cells[4] && cells[4] == cells[6] && cells[6] == player.get_piece) then player
+      else nil
+    end
+    return result
+  end
+
 
   def run
     @board = Board.new(3)
@@ -40,12 +59,16 @@ class Game
       @board.draw_board(@cells)
       if (current_player == @player1)
         turn(@player1)
+        @winner = win_check(@cells, @player1)
         current_player = @player2
       else
         turn(@player2)
+        @winner = win_check(@cells, @player2)
         current_player = @player1
       end
     end
+    @board.draw_board(@cells)
+    puts "The winner is #{@winner.get_piece}!"
   end
 
 end
