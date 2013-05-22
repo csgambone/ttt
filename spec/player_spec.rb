@@ -17,7 +17,8 @@ describe Player do
   end
 
   it "should get valid move" do
+    @game.stub(:get_cells).and_return([" ", " ", " ", " ", " ", " ", " ", " ", " "])
     @player.stub(:gets).and_return('8')
-    @player.get_move.should eq(8)
+    @player.get_move(@game.get_cells).should eq(8)
   end
 end

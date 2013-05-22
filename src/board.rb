@@ -17,6 +17,6 @@ class Board
       end
       print "\n#{@horiz_div}\n" unless i==@size-1
     end 
-    print "\n"
+    print "\n\n"
   end
 end
