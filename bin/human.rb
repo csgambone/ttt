@@ -4,6 +4,6 @@ require_relative "../src/player.rb"
 player1 = Player.new("X", "Human")
 player2 = Player.new("O", "Human")
 
-a = Game.new(player1, player2)
+a = Game.new(player1, player2, 3)
 
 a.run

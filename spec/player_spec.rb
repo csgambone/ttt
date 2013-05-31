@@ -6,7 +6,7 @@ describe Player do
 
   it "should have an enemy piece" do
     @player = Player.new("O", "Pro")
-    @player.get_enemy_piece.should eq("X")
+    @player.enemy_piece.should eq("X")
   end
 
 
@@ -16,15 +16,15 @@ describe Player do
   end
 
   it "should have a piece" do
-  	@player.get_piece.should eq("X")
+  	@player.piece.should eq("X")
   end
 
   it "should have a player type" do
-  	@player.get_player_type.should eq("Human")
+  	@player.player_type.should eq("Human")
   end
 
   it "should have an enemy piece" do
-    @player.get_enemy_piece.should eq("O")
+    @player.enemy_piece.should eq("O")
   end
 
   it "should get valid move" do

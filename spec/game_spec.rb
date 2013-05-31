@@ -8,12 +8,12 @@ describe Game do
   before (:each) do
   	@player1 = Player.new("X", "Human")
   	@player2 = Player.new("O", "Human")
-    @game = Game.new(@player1, @player2)
+    @game = Game.new(@player1, @player2, 3)
   end
 
   it "should set bottom left to player2's piece" do
-    @game.set_cell(6, @player2.get_piece)
-    expect(@game.get_cell(6)).to eq(@player2.get_piece)
+    @game.set_cell(6, @player2.piece)
+    expect(@game.get_cell(6)).to eq(@player2.piece)
   end
 
   it "should return nil" do

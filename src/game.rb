@@ -1,9 +1,12 @@
 #game.rb
 require_relative "../src/board.rb"
 
+WIN_COND = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
+
 class Game
-  def initialize(player1, player2)
+  def initialize(player1, player2, size)
   	@cells = [" ", " ", " ", " ", " ", " ", " ", " ", " "]
+    @size = size
   	@player1 = player1
   	@player2 = player2
     @winner = nil
@@ -23,17 +26,17 @@ class Game
 
   def turn(player)
     valid_move_flag = 0
-    if player.get_player_type == "Human"
+    if player.player_type == "Human"
       puts "Choose a space to play your piece [0-8]:"
     end
 
     while (valid_move_flag == 0)
   	  move = player.get_move(@cells)
       if (@cells[move] == " ")
-  	    set_cell(move, player.get_piece)
+  	    set_cell(move, player.piece)
         valid_move_flag = 1
-      else (@cells[move] == @player1.get_piece || @cells[move] == @player2.get_piece)
-        if player.get_player_type == "Human"
+      else (@cells[move] == @player1.piece || @cells[move] == @player2.piece)
+        if player.player_type == "Human"
           puts "That space is occupied, choose again [0-8]:"
         end
       end
@@ -41,29 +44,22 @@ class Game
   end
 
   def win_check(cells, player)
-    result = case
-      when (cells[0] == cells[1] && cells[1] == cells[2] && cells[2] == player.get_piece) then player
-      when (cells[3] == cells[4] && cells[4] == cells[5] && cells[5] == player.get_piece) then player
-      when (cells[6] == cells[7] && cells[7] == cells[8] && cells[8] == player.get_piece) then player
-      when (cells[0] == cells[3] && cells[3] == cells[6] && cells[6] == player.get_piece) then player
-      when (cells[1] == cells[4] && cells[4] == cells[7] && cells[7] == player.get_piece) then player
-      when (cells[2] == cells[5] && cells[5] == cells[8] && cells[8] == player.get_piece) then player
-      when (cells[0] == cells[4] && cells[4] == cells[8] && cells[8] == player.get_piece) then player
-      when (cells[2] == cells[4] && cells[4] == cells[6] && cells[6] == player.get_piece) then player
-      else nil
+    result = nil
+    WIN_COND.each do |cond|
+      if [cells[cond[0]], cells[cond[1]], cells[cond[2]]] == [player.piece, player.piece, player.piece]
+        result = player
+      end
     end
     return result
   end
 
 
   def run
-    size = 3
-    @board = Board.new(size)
-
+    @board = Board.new(@size)
     turn = 0
     current_player = @player1
 
-    while (@winner == nil && turn < size*size)
+    while (@winner == nil && turn < @size*@size)
       puts "TURN: #{turn}"
       @board.draw_board(@cells)
       if (current_player == @player1)
@@ -78,10 +74,11 @@ class Game
         turn += 1
       end
     end
+    
     puts "TURN: #{turn}"
     @board.draw_board(@cells)
     if @winner
-      puts "The winner is #{@winner.get_piece}!"
+      puts "The winner is #{@winner.piece}!"
     else
       puts "The game is a tie!"
     end

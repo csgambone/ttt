@@ -13,17 +13,7 @@ class Player
     end
   end
 
-  def get_piece
-  	return @piece
-  end
-
-  def get_player_type
-  	return @player_type
-  end
-
-  def get_enemy_piece
-    return @enemy_piece
-  end
+  attr_accessor :piece, :player_type, :enemy_piece
 
   def get_move(cells)
     if (@player_type == "Human")
