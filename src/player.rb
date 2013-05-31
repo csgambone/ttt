@@ -21,6 +21,10 @@ class Player
   	return @player_type
   end
 
+  def get_enemy_piece
+    return @enemy_piece
+  end
+
   def get_move(cells)
     if (@player_type == "Human")
       move = human_move
@@ -43,9 +47,9 @@ class Player
     Random.new.rand(0..8)
   end
 
-  def ai_pro_move(cells)
+  def win_or_block_win(piece, cells)
     WIN_COND.each do |cond|
-      if [cells[cond[0]], cells[cond[1]], cells[cond[2]]].join == ([@piece, @piece, " "].join || [@piece, " ", @piece].join || [" ", @piece, @piece].join)
+      if ([cells[cond[0]], cells[cond[1]], cells[cond[2]]].join == [piece, piece, " "].join) || ([cells[cond[0]], cells[cond[1]], cells[cond[2]]].join == [piece, " ", piece].join) || ([cells[cond[0]], cells[cond[1]], cells[cond[2]]].join == [" ", piece, piece].join)
         if cells[cond[0]] == " "
           return cond[0]
         elsif cells[cond[1]] == " "
@@ -55,53 +59,43 @@ class Player
         end
       end
     end
+    return nil
+  end
 
-    WIN_COND.each do |cond|
-      if [cells[cond[0]], cells[cond[1]], cells[cond[2]]].join == ([@enemy_piece, @enemy_piece, " "].join || [@enemy_piece, " ", @enemy_piece].join || [" ", @enemy_piece, @enemy_piece].join)
-        if cells[cond[0]] == " "
-          return cond[0]
-        elsif cells[cond[1]] == " "
-          return cond[1]
-        else
-          return cond[2]
-        end
-      end
-    end
-
+  def take_or_block_most_advantageous_spot(piece, other_piece, cells)
     priority = [0,0,0,0,0,0,0,0,0]
+    value = 0
+    move = nil
 
     for i in 0..8
       if cells[i] == " "
         WIN_COND.each do |cond|
           if i == cond[0]
-            if cells[cond[1]] == @piece && cells[cond[2]] != @enemy_piece
+            if cells[cond[1]] == other_piece && cells[cond[2]] != piece
               priority[i] += 1
-            elsif cells[cond[2]] == @piece && cells[cond[1]] != @enemy_piece
+            elsif cells[cond[2]] == other_piece && cells[cond[1]] != piece
               priority[i] += 1
             end
           end
 
           if i == cond[1]
-            if cells[cond[0]] == @piece && cells[cond[2]] != @enemy_piece
+            if cells[cond[0]] == other_piece && cells[cond[2]] != piece
               priority[i] += 1
-            elsif cells[cond[2]] == @piece && cells[cond[0]] != @enemy_piece
+            elsif cells[cond[2]] == other_piece && cells[cond[0]] != piece
               priority[i] += 1
             end
           end
 
           if i == cond[2]
-            if cells[cond[0]] == @piece && cells[cond[1]] != @enemy_piece
+            if cells[cond[0]] == other_piece && cells[cond[1]] != piece
               priority[i] += 1
-            elsif cells[cond[1]] == @piece && cells[cond[0]] != @enemy_piece
+            elsif cells[cond[1]] == other_piece && cells[cond[0]] != piece
               priority[i] += 1
             end
           end
         end
       end
     end
-
-    value = 0
-    move = nil
 
     for i in 0..8
       if priority[i] > value
@@ -119,21 +113,48 @@ class Player
 
     if move != nil
       return move
+    else
+      return nil
+    end
+  end
+
+  def ai_pro_move(cells)
+    #take win
+    if win_or_block_win(@piece, cells) != nil
+      return win_or_block_win(@piece, cells)
     end
 
+    #block enemy win
+    if win_or_block_win(@enemy_piece, cells) != nil
+      return win_or_block_win(@enemy_piece, cells)
+    end
+
+    #block enemy best play
+    if take_or_block_most_advantageous_spot(@piece, @enemy_piece, cells) != nil
+      return take_or_block_most_advantageous_spot(@piece, @enemy_piece, cells)
+    end
+
+    #take own best play
+    if take_or_block_most_advantageous_spot(@piece, @enemy_piece, cells) != nil
+      return take_or_block_most_advantageous_spot(@enemy_piece, @piece, cells)
+    end
+
+    #take middle
     if cells[4] == " "
       return 4
     end
 
+    #take a corner
     [0,2,6,8].each do |corner|
       if cells[corner] == " "
         return corner
       end
     end
 
-    [1,3,5,7].each do |corner|
-      if cells[corner] == " "
-        return corner
+    #take a side
+    [1,3,5,7].each do |side|
+      if cells[side] == " "
+        return side
       end
     end
   end
@@ -141,5 +162,6 @@ end
 
 # pro ai:
 # cycle 8 win conditions, if find 2/3 taken in any, take 3rd to win.
-# else cycle each cell, find number of win conditions with one token and current cell for each cell, take cell with highest result
+# else cycle each cell, find number of win conditions with one enemy token and current cell for each cell, take cell with highest result
+# else cycle each cell, find number of win conditions with one friendly token and current cell for each cell, take cell with highest result
 # else take middle, else take random corner, else take random available
