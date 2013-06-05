@@ -2,18 +2,14 @@
 
 WIN_COND = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
 SIDE = [1,3,5,7]
-CORNER = [2,4,6,8]
+CORNER = [0,2,6,8]
 MIDDLE = [4]
 
 class Player
   def initialize(piece, player_type)
   	@piece = piece
   	@player_type = player_type
-    if @piece == "X"
-      @enemy_piece = "O"
-    else
-      @enemy_piece = "X"
-    end
+    @piece == "X" ? @enemy_piece = "O" : @enemy_piece = "X"
   end
 
   attr_accessor :piece, :player_type, :enemy_piece
@@ -43,12 +39,8 @@ class Player
   def win_or_block_win(piece, cells)
     WIN_COND.each do |cond|
       if ([cells[cond[0]], cells[cond[1]], cells[cond[2]]].sort == [piece, piece, " "].sort)
-        if cells[cond[0]] == " "
-          return cond[0]
-        elsif cells[cond[1]] == " "
-          return cond[1]
-        else
-          return cond[2]
+        cond.each do |cond_element|
+          return cond_element if cells[cond_element] == " "
         end
       end
     end
@@ -64,19 +56,19 @@ class Player
       if cells[i] == " "
         WIN_COND.each do |cond|
           if i == cond[0]
-            if (cells[cond[1]] == other_piece && cells[cond[2]] != piece) || (cells[cond[2]] == other_piece && cells[cond[1]] != piece)
+            if ([cells[cond[1]], cells[cond[2]]].sort == [other_piece, " "].sort)
               priority[i] += 1
             end
           end
 
           if i == cond[1]
-            if (cells[cond[0]] == other_piece && cells[cond[2]] != piece) || (cells[cond[2]] == other_piece && cells[cond[0]] != piece)
+            if ([cells[cond[0]], cells[cond[2]]].sort == [other_piece, " "].sort)
               priority[i] += 1
             end
           end
 
           if i == cond[2]
-            if (cells[cond[0]] == other_piece && cells[cond[1]] != piece) || (cells[cond[1]] == other_piece && cells[cond[0]] != piece)
+            if ([cells[cond[0]], cells[cond[1]]].sort == [other_piece, " "].sort)
               priority[i] += 1
             end
           end
@@ -88,11 +80,8 @@ class Player
       if priority[i] > value
         value = priority[i]
         move = i
-      end
-      if (priority[i] != 0) && (priority[i] == value)
-        if (move == 1 || move == 3 || move == 5 || move == 7) && (i == 0 || i == 2 || i == 6 || i == 8 || i == 4)
-          move = i
-        elsif (move == 0 || move == 2 || move == 6 || move == 8) && (i == 4)
+      elsif (priority[i] != 0) && (priority[i] == value)
+        if ((SIDE.include?(move) && (CORNER.include?(i) || MIDDLE.include?(i))) || (CORNER.include?(move) && MIDDLE.include?(i)))
           move = i
         end
       end

@@ -9,7 +9,7 @@ describe Board do
   end
 
   it "should draw a blank board" do
-    @game.stub(:get_cells).and_return([" ", " ", " ", " ", " ", " ", " ", " ", " "])
-    @board.draw_board(@game.get_cells)
+    @game.stub(:cells).and_return([" ", " ", " ", " ", " ", " ", " ", " ", " "])
+    @board.draw_board(@game.cells)
   end
 end

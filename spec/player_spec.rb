@@ -28,8 +28,24 @@ describe Player do
   end
 
   it "should get valid move" do
-    @game.stub(:get_cells).and_return([" ", " ", " ", " ", " ", " ", " ", " ", " "])
+    @game.stub(:cells).and_return([" ", " ", " ", " ", " ", " ", " ", " ", " "])
     @player.stub(:gets).and_return('8')
-    @player.get_move(@game.get_cells).should eq(8)
+    @player.get_move(@game.cells).should eq(8)
+  end
+
+  @player = Player.new("O", "Pro")
+
+  @tests = {[" ", " ", " ", " ", " ", " ", " ", " ", " "] => 4,
+            ["X", " ", " ", " ", " ", " ", " ", " ", " "] => 4,
+            [" ", " ", " ", " ", " ", " ", " ", " ", "X"] => 4,
+            ["O", " ", "O", " ", "X", " ", " ", " ", " "] => 1,
+            ["X", " ", " ", " ", "O", " ", " ", " ", "X"] => 1,
+            ["X", "O", "X", " ", "O", "O", "O", "X", "X"] => 3,
+            ["X", "X", "O", "O", "O", " ", "X", "X", " "] => 5,
+            [" ", " ", " ", " ", "O", " ", "X", " ", "X"] => 7}
+  @tests.each do |cells, move|
+    it "returns move:#{move} when input cells are:#{cells}" do
+      @player.ai_pro_move(cells).should eq(move)
+    end
   end
 end

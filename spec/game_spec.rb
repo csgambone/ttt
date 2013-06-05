@@ -17,7 +17,7 @@ describe Game do
   end
 
   it "should return nil" do
-  	@game.win_check(@game.get_cells, @player1).should eq(nil)
+  	@game.win_check(@game.cells, @player1).should eq(nil)
   end
 
   it "should have player 1 win" do
@@ -25,7 +25,7 @@ describe Game do
   	@game.set_cell(1, "X")
   	@game.set_cell(2, "X")
 
-  	@game.win_check(@game.get_cells, @player1).should eq(@player1)
+  	@game.win_check(@game.cells, @player1).should eq(@player1)
   end
 
   it "should have player 2 win" do
@@ -33,6 +33,6 @@ describe Game do
   	@game.set_cell(4, "O")
   	@game.set_cell(8, "O")
 
-  	@game.win_check(@game.get_cells, @player2).should eq(@player2)
+  	@game.win_check(@game.cells, @player2).should eq(@player2)
   end
 end
